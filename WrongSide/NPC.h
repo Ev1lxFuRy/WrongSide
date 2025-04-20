@@ -23,8 +23,8 @@ public:
 
 	void drawSprite(sf::RenderWindow& window);
 
-	void setRectRight(int x, int y, float &currentFrame);
-	void setRectLeft(int x, int y, float& currentFrame);
+	void setRectRight(int x, int y, float &currentFrame, int animation = 0);
+	void setRectLeft(int x, int y, float& currentFrame, int animation = 0);
 
 	void moveUp(float& time, float shiftModifier = 1);
 	void moveDown(float& time, float shiftModifier = 1);
@@ -45,5 +45,7 @@ public:
 	sf::Vector2f getPosition();
 
 	sf::FloatRect getGlobalBounds();
+
+	sf::FloatRect getGlobalBoundsRectangle();
 };
 

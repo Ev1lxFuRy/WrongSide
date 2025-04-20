@@ -2,7 +2,7 @@
 
 NPC::NPC(int& health, double& speed, int &PosiotinX, int &PositionY, int& sizeX, int& sizeY, float& scaleX, float& scaleY) : health(health), speed(speed)
 {
-	heroTexture.loadFromFile("../Assets/charecters/soldier/soldier_1_cut4_.png");
+	heroTexture.loadFromFile("../Assets/charecters/soldier/soldier1.png");
     heroSprite.setTexture(heroTexture);
 
     heroSprite.setTextureRect(sf::IntRect(0, 0, sizeX, sizeY));
@@ -16,6 +16,7 @@ NPC::NPC(int& health, double& speed, int &PosiotinX, int &PositionY, int& sizeX,
 	rec.setSize(sf::Vector2f(colliderWidth , colliderHeight));
 	rec.setOrigin((colliderWidth / 2), (colliderHeight / 2));
 	rec.setPosition(heroSprite.getPosition());
+	rec.setFillColor(sf::Color::Transparent);
 
     rec.setOutlineThickness(5);
     rec.setOutlineColor(sf::Color::Red);
@@ -27,14 +28,14 @@ void NPC::drawSprite(sf::RenderWindow& window)
 	window.draw(heroSprite);
 }
 
-void NPC::setRectRight(int x, int y, float &currentFrame)
+void NPC::setRectRight(int x, int y, float &currentFrame, int animation)
 {
-	heroSprite.setTextureRect(sf::IntRect(x*int(currentFrame), y, x, y));
+	heroSprite.setTextureRect(sf::IntRect(x*int(currentFrame), 0 + y * animation, x, y));
 }
 
-void NPC::setRectLeft(int x, int y, float& currentFrame)
+void NPC::setRectLeft(int x, int y, float& currentFrame, int animation)
 {
-	heroSprite.setTextureRect(sf::IntRect(x * int(currentFrame)+x, y, -x, y));
+	heroSprite.setTextureRect(sf::IntRect(x * int(currentFrame)+x, 0 + y * animation, -x, y));
 }
 
 void NPC::moveUp(float &time, float shiftModifier)
@@ -100,4 +101,9 @@ sf::Vector2f NPC::getPosition()
 sf::FloatRect NPC::getGlobalBounds()
 {
 	return heroSprite.getGlobalBounds();
+}
+
+sf::FloatRect NPC::getGlobalBoundsRectangle()
+{
+	return rec.getGlobalBounds();
 }

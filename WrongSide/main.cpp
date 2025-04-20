@@ -1,10 +1,10 @@
 #include<SFML/Graphics.hpp>
 #include<fstream>
-#include<vector>
 #include<iostream>
 
 #include "NPC.h"
 #include "Bullet.h"
+#include "RenderFPS.h"
 
 using namespace std;
 using namespace sf;  
@@ -13,14 +13,14 @@ using namespace sf;
 
 int main()
 {
-
+	setlocale(LC_ALL, "Russian");
 	/*---------------------------------------  HeroParameters  --------------------------------------------------*/
 
 	int health = 100;
 	double speed = 0.1;
 
 	int sizeX = 192;
-	int sizeY = 225;
+	int sizeY = 205;
 
 	float scaleX = 0.65;
 	float scaleY = 0.65;
@@ -33,28 +33,39 @@ int main()
 	int PositionX_player2 = 800;
 	int PositionY_player1 = 600;
 
+	int frame = 0; //reloading animation
+
 	/*---------------------------------------  BulletParameters  --------------------------------------------------*/
 
-	int damageBullet = 50;
+	bool leftMouse = 0;
+	bool rightMouse = 1;
+
+	int damageBullet = 5;
 	float speedBullet = 0.2;
 	
 	int sizeXbullet = 1030;
 	int sizeYbullet = 320;
 
-	float scaleXbullet = 0.020;
-	float scaleYbullet = 0.020;
+	float scaleXbullet = 0.017;
+	float scaleYbullet = 0.017;
+
+	Clock fireRateClock; 
+	float fireCooldown = 0.2;
+
+	bool isBulletFromLeft = 1;
 
 	/*---------------------------------------------  Logic  --------------------------------------------------*/
 
+	bool IsRightDir = 1;
+
+	Clock clockFPS;
+	float frameRate = 0;
+	int fps;
+
 	Clock clock;
 	float currentFrame = 0;
-
-	Clock fireRateClock; 
-	float fireCooldown = 0.3f;
-
 	bool gameOver = 0;
 	bool isDead = 0;
-	bool IsRightDir = 1;
 	bool IsMoving = 0;
 
 	/*-----------------------------------------  WindowSettings  --------------------------------------------------*/
@@ -74,13 +85,15 @@ int main()
 
 	vector<Bullet> bullet;
 
+	RenderFPS rFps;
+
 	/*------------------------------------------  GameLoop  -----------------------------------------------------*/
 
 	while (window.isOpen() && !gameOver)
 	{
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
-		time /= 300;
+		time /= 500;
 
 		IsMoving = 0;
 
@@ -95,6 +108,10 @@ int main()
 			}
 		}
 
+		frameRate = clockFPS.restart().asSeconds();
+		fps = int( 1 / frameRate );
+		rFps.loadText(to_string(fps));
+
 		/*--------------------------------------------  Dead  -----------------------------------------------------------*/
 
 		if (player.getHealth() <= 0)
@@ -106,18 +123,40 @@ int main()
 			if (currentFrame > 4)
 			{
 				currentFrame -= 4;
+				gameOver = 1;
 			}
 
 			if (IsRightDir)
 			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
+				player.setRectRight(sizeX, sizeY, currentFrame,8);
 			}
 			else if (!IsRightDir)
 			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
+				player.setRectLeft(sizeX, sizeY, currentFrame,8);
 			}
 
 			gameOver = 1;
+		}
+		if (player1.getHealth() <= 0 )
+		{
+			isDead = 1 ;
+
+			currentFrame += 0.005 * time;
+
+			if (currentFrame > 4)
+			{
+				currentFrame -= 4;
+				gameOver = 1;
+			}
+
+			if (IsRightDir)
+			{
+				player1.setRectRight(sizeX, sizeY, currentFrame,8);
+			}
+			else if (!IsRightDir)
+			{
+				player1.setRectLeft(sizeX, sizeY, currentFrame,8);
+			}
 		}
 
 		/*--------------------------------------------  Run  -----------------------------------------------------------*/
@@ -136,11 +175,11 @@ int main()
 
 			if (IsRightDir)
 			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
+				player.setRectRight(sizeX, sizeY, currentFrame,2);
 			}
 			else if (!IsRightDir)
 			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
+				player.setRectLeft(sizeX, sizeY, currentFrame,2);
 			}
 		}
 		else if (Keyboard::isKeyPressed(Keyboard::A) && Keyboard::isKeyPressed(Keyboard::LShift) && !isDead)
@@ -156,15 +195,15 @@ int main()
 
 			if (IsRightDir)
 			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
+				player.setRectRight(sizeX, sizeY, currentFrame,2);
 			}
 			else if (!IsRightDir)
 			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
+				player.setRectLeft(sizeX, sizeY, currentFrame,2);
 			}
 		}
 
-		/*------------------------------------------  CalmMove  -----------------------------------------------------------*/
+		/*--------------------------------------------  Move  -----------------------------------------------------------*/
 
 		else if (Keyboard::isKeyPressed(Keyboard::D) && !isDead)
 		{
@@ -179,14 +218,9 @@ int main()
 				currentFrame -= 7;
 			}
 
-			if (IsRightDir)
-			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
-			}
-			else if (!IsRightDir)
-			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
-			}
+			player.setRectRight(sizeX, sizeY, currentFrame,1);
+		
+			
 		}
         else if (Keyboard::isKeyPressed(Keyboard::A) && !isDead)
 		{
@@ -201,14 +235,7 @@ int main()
 				currentFrame -= 7;
 			}
 
-			if (IsRightDir)
-			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
-			}
-			else if (!IsRightDir)
-			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
-			}
+			player.setRectLeft(sizeX, sizeY, currentFrame,1);
 		}
 
 		/*-----------------------------------------  DontMoving  -----------------------------------------------------------*/
@@ -230,51 +257,12 @@ int main()
 				player.setRectLeft(sizeX, sizeY, currentFrame);
 			}
 		}
-		
-		/*--------------------------------------------  Shoot  -----------------------------------------------------------*/
-
-		else if (Mouse::isButtonPressed(Mouse::Left))
-		{
-			currentFrame += 0.005 * time;
-
-			if (currentFrame > 4)
-			{
-				currentFrame -= 4;
-			}
-
-			if (IsRightDir)
-			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
-			}
-			else if (!IsRightDir)
-			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
-			}
-		}
-        else if (Mouse::isButtonPressed(Mouse::Right))
-		{
-			currentFrame += 0.005 * time;
-
-			if (currentFrame > 4)
-			{
-				currentFrame -= 4;
-			}
-
-			if (IsRightDir)
-			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
-			}
-			else if (!IsRightDir)
-			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
-			}
-		}
-
+	
 		/*--------------------------------------------  Reload  -----------------------------------------------------------*/
 
-		if (player.getAmmo() <= 0 || Keyboard::isKeyPressed(Keyboard::R))
+		else if (player.getAmmo() <= 0 || Keyboard::isKeyPressed(Keyboard::R))
 		{
-			currentFrame += 0.005 * time;
+			currentFrame += 0.0005 * time;
 
 			if (currentFrame > 8)
 			{
@@ -283,47 +271,96 @@ int main()
 
 			if (IsRightDir)
 			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
+				player.setRectRight(sizeX, sizeY, currentFrame,5);
+				frame++;
 			}
 			else if (!IsRightDir)
 			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
+				player.setRectLeft(sizeX, sizeY, currentFrame,5);
+				frame++;
 			}
 
-			player.setAmmo(30);
+			if (frame >= 8)
+			{
+			    player.setAmmo(30);
+				frame -= 8;
+			}
 		}
 
-		/*--------------------------------------------  Healing  -----------------------------------------------------------*/
+		/*--------------------------------------------  Shoot  -----------------------------------------------------------*/
 
-		if (Keyboard::isKeyPressed(Keyboard::F) && !isDead)
+		if (Mouse::isButtonPressed(Mouse::Left) )
 		{
-			currentFrame += 0.005 * time;
 
-			if (currentFrame > 5)
+			if (fireRateClock.getElapsedTime().asSeconds() >= fireCooldown)
 			{
-				currentFrame -= 5;
+				if (player.getPosition().x < player1.getPosition().x)
+				{
+					isBulletFromLeft = 1;
+				}
+				else
+				{
+					isBulletFromLeft = 0;
+				}
+
+				bullet.push_back(Bullet(damageBullet, speedBullet, sizeXbullet, sizeYbullet, scaleXbullet, scaleYbullet, player, leftMouse, isBulletFromLeft, IsRightDir));
+
+				player.setAmmo(player.getAmmo() - 1);
+				fireRateClock.restart();
+			}
+
+			if (currentFrame > 4)
+			{
+				currentFrame -= 4;
 			}
 
 			if (IsRightDir)
 			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
+				player.setRectRight(sizeX, sizeY, currentFrame, 3);
 			}
 			else if (!IsRightDir)
 			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
+				player.setRectLeft(sizeX, sizeY, currentFrame, 3);
 			}
-
-			if (player.getHealth() <= 100 && player.getSyringe() > 0 )
+		}
+        if (Mouse::isButtonPressed(Mouse::Right))
+		{
+			if (fireRateClock.getElapsedTime().asSeconds() >= fireCooldown)
 			{
-				player.setHealth(player.getHealth() + 50);
-				player.setSyringe(player.getSyringe() - 1);
+				if (player.getPosition().x < player1.getPosition().x)
+				{
+					isBulletFromLeft = 1;
+				}
+				else
+				{
+					isBulletFromLeft = 0;
+				}
+
+				bullet.push_back(Bullet(damageBullet, speedBullet, sizeXbullet, sizeYbullet, scaleXbullet, scaleYbullet, player, rightMouse, isBulletFromLeft, IsRightDir));
+				player.setAmmo(player.getAmmo() - 1);
+				fireRateClock.restart();
 			}
 
+			currentFrame += 0.005 * time;
+
+			if (currentFrame > 4)
+			{
+				currentFrame -= 4;
+			}
+
+			if (IsRightDir)
+			{
+				player.setRectRight(sizeX, sizeY, currentFrame, 4);
+			}
+			else if (!IsRightDir)
+			{
+				player.setRectLeft(sizeX, sizeY, currentFrame, 4);
+			}
 		}
 
 		/*--------------------------------------------  Melee  -----------------------------------------------------------*/
 
-		else if (Keyboard::isKeyPressed(Keyboard::V) && !isDead)
+		if (Keyboard::isKeyPressed(Keyboard::V))
 		{
 			currentFrame += 0.005 * time;
 
@@ -334,61 +371,47 @@ int main()
 
 			if (IsRightDir)
 			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
+				player.setRectRight(sizeX, sizeY, currentFrame, 6);
 			}
 			else if (!IsRightDir)
 			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
+				player.setRectLeft(sizeX, sizeY, currentFrame, 6);
 			}
 		}
 
-		/*--------------------------------------------  Sit  -----------------------------------------------------------*/
+		/*--------------------------------------------  Healing  -----------------------------------------------------------*/
 
-		else if (Keyboard::isKeyPressed(Keyboard::LControl) && !isDead)
+		else if (Keyboard::isKeyPressed(Keyboard::F) && !isDead)
 		{
-			currentFrame += 0.005 * time;
-
-			if (currentFrame > 3)
+			if (player1.getHealth() <= 100 && player1.getSyringe() > 0 )
 			{
-				currentFrame -= 3;
+				currentFrame += 0.005 * time;
+
+				if (currentFrame > 5)
+				{
+					currentFrame -= 5;
+
+					player1.setHealth(player.getHealth() + 20);
+					player1.setSyringe(player.getSyringe() - 1);
+				}
+
+				if (IsRightDir)
+				{
+					player1.setRectRight(sizeX, sizeY, currentFrame, 11);
+				}
+				else if (!IsRightDir)
+				{
+					player1.setRectLeft(sizeX, sizeY, currentFrame, 11);
+				}
 			}
 
-			if (IsRightDir)
-			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
-			}
-			else if (!IsRightDir)
-			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
-			}
-		}
-
-	    /*----------------------------------------  Siting shoot  -----------------------------------------------------------*/
-
-		else if (Keyboard::isKeyPressed(Keyboard::LControl) && Mouse::isButtonPressed(Mouse::Right) && !isDead )
-		{
-			currentFrame += 0.005 * time;
-
-			if (currentFrame > 3)
-			{
-				currentFrame -= 3;
-			}
-
-			if (IsRightDir)
-			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
-			}
-			else if (!IsRightDir)
-			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
-			}
 		}
 
 		/*--------------------------------------------  Roll  -----------------------------------------------------------*/
 
-		else if (Keyboard::isKeyPressed(Keyboard::Space) && !isDead)
+		else if (Keyboard::isKeyPressed(Keyboard::E) && !isDead)
 		{
-			currentFrame += 0.005 * time;
+			currentFrame += 0.00000005 * time;
 
 			if (currentFrame > 6)
 			{
@@ -397,56 +420,82 @@ int main()
 
 			if (IsRightDir)
 			{
-				player.setRectRight(sizeX, sizeY, currentFrame);
+				player.setRectRight(sizeX, sizeY, currentFrame,10);
 			}
 			else if (!IsRightDir)
 			{
-				player.setRectLeft(sizeX, sizeY, currentFrame);
+				player.setRectLeft(sizeX, sizeY, currentFrame,10);
 			}
 		} 
-
-		/*--------------------------------------------  shoot  -----------------------------------------------------------*/
-
-		if (Mouse::isButtonPressed(Mouse::Left) && fireRateClock.getElapsedTime().asSeconds() >= fireCooldown)
-		{
-			bullet.push_back(Bullet(damageBullet, speedBullet, sizeXbullet, sizeYbullet, scaleXbullet, scaleYbullet, player, IsRightDir));
-
-			fireRateClock.restart();
-		}
 
 		/*--------------------------------------------  moveBullets  -----------------------------------------------------------*/
 
 		for (size_t i = 0; i < bullet.size(); i++)
 		{
-			if (bullet[i].getBulletDir() == 1)
+			if (bullet[i].getBulletMoveDir() == 1)
 			{
 				bullet[i].moveRight(time);
 			}
-			else if(bullet[i].getBulletDir() == 0)
+
+			else if(bullet[i].getBulletMoveDir() == 0)
 			{
 				bullet[i].changeImageDir(scaleXbullet, scaleYbullet);
 				bullet[i].moveLeft(time);
 			}
 		}
 
-		/*--------------------------------------------  shotCollision  -----------------------------------------------------------*/
+		/*--------------------------------------------  GotHurt  -----------------------------------------------------------*/
 
-		for (size_t i = 0; i < bullet.size(); i++)
+
+		/*currentFrame += 0.005 * time;*/
+
+		if (currentFrame > 3)
+		{
+			currentFrame -= 3;
+		}
+
+		for (int i = bullet.size() - 1; i >= 0; --i)
+		{
+			FloatRect playerBounder = player1.getGlobalBoundsRectangle();
+			FloatRect bulletBounder = bullet[i].getGlobalBounds();
+
+			if ( bullet[i].getBulletDir() == 1 && bulletBounder.left + bulletBounder.width > playerBounder.left &&
+				playerBounder.left + playerBounder.width > bulletBounder.left)
+			{
+				player1.setRectLeft(sizeX, sizeY, currentFrame, 7);
+
+				player1.setHealth(player1.getHealth() - bullet[i].getDamage());
+				bullet.erase(bullet.begin() + i);
+				i--;
+			}
+			else if(bullet[i].getBulletDir() == 0 && bulletBounder.left < playerBounder.left + playerBounder.width && 
+				bulletBounder.left + bulletBounder.width > playerBounder.left)
+			{
+				player1.setRectRight(sizeX, sizeY, currentFrame, 7);
+
+				player1.setHealth(player1.getHealth() - bullet[i].getDamage());
+				bullet.erase(bullet.begin() + i);
+				i--;
+			}
+		}
+
+		/*--------------------------------------------  HitWall  -----------------------------------------------------------*/
+			
+		for (int i = bullet.size() - 1; i >= 0; i--)
 		{
 			FloatRect bulletBounds = bullet[i].getGlobalBounds();
 
-			if (bulletBounds.intersects(player1.getGlobalBounds()))
+			if (bulletBounds.left + bulletBounds.width < 0 ||
+				bulletBounds.left > width ||
+				bulletBounds.top + bulletBounds.height < 0 ||
+				bulletBounds.top > height)
 			{
-				player.setHealth(player1.getHealth() - bullet[i].getDamage());
 				bullet.erase(bullet.begin() + i);
-				i--; 
 			}
 		}
-			
-		/*--------------------------------------------  Draw  -----------------------------------------------------------*/
 
+		/*--------------------------------------------  Draw  -----------------------------------------------------------*/
 		window.clear(Color::Black);
-		
 		
 		for (size_t i = 0; i < bullet.size(); i++)
 		{
@@ -455,6 +504,8 @@ int main()
 
 		player.drawSprite(window);
 		player1.drawSprite(window);
+
+		rFps.draw(window);
 
 		window.display();
 	}

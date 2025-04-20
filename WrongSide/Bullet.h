@@ -10,11 +10,13 @@ class Bullet
 
 	float speed;
 	int damage;
-	bool bulletDir = 1;
+
+	bool bulletDir;
+	bool bulletMoveDir;
 
 public:
 
-	Bullet(int &damage, float &speed, int& sizeX, int &sizeY, float &scaleX, float &scaleY, NPC &player, bool &direction);
+	Bullet(int &damage, float &speed, int& sizeX, int &sizeY, float &scaleX, float &scaleY, NPC &player,bool &MouseButton, bool &bulletDir, bool bulletMoveDir);
 
 	void Draw(sf::RenderWindow& window);
 
@@ -27,6 +29,8 @@ public:
 	sf::FloatRect getGlobalBounds();
 
 	bool getBulletDir();
+
+	bool getBulletMoveDir();
 
 	void changeImageDir(float &scaleX, float &scaleY);
 };

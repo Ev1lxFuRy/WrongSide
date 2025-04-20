@@ -3,20 +3,28 @@
 
 sf::Texture Bullet::bulletTexture;
 
-Bullet::Bullet(int &damage, float &speed, int &sizeX, int &sizeY, float &scaleX, float &scaleY, NPC &player, bool& direction)
-	: damage(damage), speed(speed), bulletDir(direction)
+Bullet::Bullet(int &damage, float &speed, int &sizeX, int &sizeY, float &scaleX,
+	float &scaleY, NPC &player,bool &MouseButton, bool &bulletDir, bool bulletMoveDir) : damage(damage), speed(speed), bulletDir(bulletDir), bulletMoveDir(bulletMoveDir)
 {
-	if (bulletTexture.loadFromFile("../Assets/bullet_rgba.png"))
+	if(bulletTexture.loadFromFile("../Assets/bullets/bullet.png"))
 	{
-		std::cout<<"file opened"<<std::endl;
+	     std::cout << "“екстура загружена" << std::endl;
 	}
-
 	bulletSprite.setTexture(bulletTexture);
 
 	bulletSprite.setTextureRect(sf::IntRect(0, 0, sizeX, sizeY));
 	bulletSprite.setOrigin(sizeX / 2, sizeY / 2);
 	bulletSprite.setScale(sf::Vector2f(scaleX, scaleY));
-	bulletSprite.setPosition(player.getPosition());
+
+	// смещение пули в зависимости от режимов стрельбы
+	if (MouseButton == 1)
+	{
+		bulletSprite.setPosition(player.getPosition());
+	}
+	else
+	{
+		bulletSprite.setPosition(sf::Vector2f(player.getPosition().x, player.getPosition().y + 18));
+	}
 }
 
 void Bullet::Draw(sf::RenderWindow& window)
@@ -47,6 +55,11 @@ sf::FloatRect Bullet::getGlobalBounds()
 bool Bullet::getBulletDir()
 {
 	return bulletDir;
+}
+
+bool Bullet::getBulletMoveDir()
+{
+	return bulletMoveDir; 
 }
 
 void Bullet::changeImageDir(float& scaleX, float& scaleY)
