@@ -6,7 +6,7 @@ sf::Texture Bullet::bulletTexture;
 Bullet::Bullet(int &damage, float &speed, int &sizeX, int &sizeY, float &scaleX,
 	float &scaleY, NPC &player,bool &MouseButton, bool &bulletDir, bool bulletMoveDir) : damage(damage), speed(speed), bulletDir(bulletDir), bulletMoveDir(bulletMoveDir)
 {
-	if(bulletTexture.loadFromFile("../Assets/bullets/bullet.png"))
+	if(bulletTexture.loadFromFile("../../../Assets/bullets/bullet.png"))
 	{
 	     std::cout << "Текстура загружена" << std::endl;
 	}

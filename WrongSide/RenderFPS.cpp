@@ -4,7 +4,7 @@
 
 RenderFPS::RenderFPS()
 {
-	font.loadFromFile("../Assets/fonts/Italianno-Regular.ttf");
+	font.loadFromFile("../../../Assets/fonts/Italianno-Regular.ttf");
 	text.setFont(font);
 	text.setPosition(sf::Vector2f(0, 0));
 }

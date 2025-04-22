@@ -2,7 +2,7 @@
 
 NPC::NPC(int& health, double& speed, int &PosiotinX, int &PositionY, int& sizeX, int& sizeY, float& scaleX, float& scaleY) : health(health), speed(speed)
 {
-	heroTexture.loadFromFile("../Assets/charecters/soldier/soldier1.png");
+	heroTexture.loadFromFile("../../../Assets/charecters/soldier/soldier1_debug.jpg");
     heroSprite.setTexture(heroTexture);
 
     heroSprite.setTextureRect(sf::IntRect(0, 0, sizeX, sizeY));
