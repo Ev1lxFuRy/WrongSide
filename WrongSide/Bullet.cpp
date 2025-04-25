@@ -16,15 +16,43 @@ Bullet::Bullet(int &damage, float &speed, int &sizeX, int &sizeY, float &scaleX,
 	bulletSprite.setOrigin(sizeX / 2, sizeY / 2);
 	bulletSprite.setScale(sf::Vector2f(scaleX, scaleY));
 
-	// смещение пули в зависимости от режимов стрельбы
-	if (MouseButton == 1)
+	// смещение пули в зависимости от режимов стрельбы и персонажа
+	if (player.getSkinNumber() == "1")
 	{
-		bulletSprite.setPosition(player.getPosition());
+		if (MouseButton == 1)
+		{
+			bulletSprite.setPosition(player.getPosition());
+		}
+		else
+		{
+			bulletSprite.setPosition(sf::Vector2f(player.getPosition().x, player.getPosition().y + 18));
+		}
 	}
-	else
+
+	if (player.getSkinNumber() == "2")
 	{
-		bulletSprite.setPosition(sf::Vector2f(player.getPosition().x, player.getPosition().y + 18));
+		if (MouseButton == 1)
+		{
+			bulletSprite.setPosition(sf::Vector2f(player.getPosition().x, player.getPosition().y + 23));
+		}
+		else
+		{
+			bulletSprite.setPosition(sf::Vector2f(player.getPosition().x, player.getPosition().y + 8));
+		}
 	}
+
+	if (player.getSkinNumber() == "3")
+	{
+		if (MouseButton == 1)
+		{
+			bulletSprite.setPosition(sf::Vector2f(player.getPosition().x, player.getPosition().y + 13 ));
+		}
+		else
+		{
+			bulletSprite.setPosition(sf::Vector2f(player.getPosition().x, player.getPosition().y - 2));
+		}
+	}
+	
 }
 
 void Bullet::Draw(sf::RenderWindow& window)

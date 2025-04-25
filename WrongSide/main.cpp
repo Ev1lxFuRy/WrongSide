@@ -5,6 +5,7 @@
 #include "NPC.h"
 #include "Bullet.h"
 #include "RenderFPS.h"
+#include "Map.h"
 
 using namespace std;
 using namespace sf;  
@@ -14,6 +15,10 @@ using namespace sf;
 int main()
 {
 	setlocale(LC_ALL, "Russian");
+
+	float mapScaleX = 5;
+	float mapScaleY = 5;
+
 	/*---------------------------------------  HeroParameters  --------------------------------------------------*/
 
 	int health = 100;
@@ -36,6 +41,10 @@ int main()
 
 	int frame = 0; //reloading animation
 
+	string skinName1 = "1";
+	string skinName2 = "2";
+	string skinName3 = "3";
+
 	/*---------------------------------------  BulletParameters  --------------------------------------------------*/
 
 	bool leftMouse = 0;
@@ -49,8 +58,8 @@ int main()
 	int sizeXbullet = 1030;
 	int sizeYbullet = 320;
 
-	float scaleXbullet = 0.017;
-	float scaleYbullet = 0.017;
+	float scaleXbullet = 0.015;
+	float scaleYbullet = 0.015; //17
 
 	Clock fireRateClock; 
 	float fireCooldownPrecition = 0.15;
@@ -87,8 +96,9 @@ int main()
 
 	/*------------------------------------------  LoadObjects  --------------------------------------------------*/
 
-	NPC player(health, speed, PositionX_player1, PositionY_player1, sizeX, sizeY, scaleX, scaleY);
-	NPC player1(health, speed, PositionX_player2, PositionY_player2, sizeX, sizeY, scaleX, scaleY);
+	Map map(mapScaleX, mapScaleY);
+	NPC player(skinName2, health, speed, PositionX_player1, PositionY_player1, sizeX, sizeY, scaleX, scaleY);
+	NPC player1(skinName2, health, speed, PositionX_player2, PositionY_player2, sizeX, sizeY, scaleX, scaleY);
 
 	vector<Bullet> bullet;
 
@@ -608,7 +618,9 @@ int main()
 
 		/*--------------------------------------------  Draw  -----------------------------------------------------------*/
 		window.clear(Color::Black);
-		
+
+		map.draw(window);
+
 		for (size_t i = 0; i < bullet.size(); i++)
 		{
 			bullet[i].Draw(window);

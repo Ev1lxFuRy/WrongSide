@@ -1,8 +1,8 @@
 #include "NPC.h"
 
-NPC::NPC(int& health, double& speed, int &PosiotinX, int &PositionY, int& sizeX, int& sizeY, float& scaleX, float& scaleY) : health(health), speed(speed)
+NPC::NPC(std::string &skinNumber, int& health, double& speed, int &PosiotinX, int &PositionY, int& sizeX, int& sizeY, float& scaleX, float& scaleY) : health(health), speed(speed), skinNumber(skinNumber)
 {
-	heroTexture.loadFromFile("../../../Assets/charecters/soldier/soldier1_debug.jpg");
+	heroTexture.loadFromFile("../../../Assets/charecters/soldier/animation" + skinNumber + "/soldier" + skinNumber + ".png" );
     heroSprite.setTexture(heroTexture);
 
     heroSprite.setTextureRect(sf::IntRect(0, 0, sizeX, sizeY));
@@ -106,4 +106,9 @@ sf::FloatRect NPC::getGlobalBounds()
 sf::FloatRect NPC::getGlobalBoundsRectangle()
 {
 	return rec.getGlobalBounds();
+}
+
+std::string NPC::getSkinNumber()
+{
+	return skinNumber;
 }

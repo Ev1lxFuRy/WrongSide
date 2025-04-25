@@ -7,6 +7,8 @@ class NPC
 	sf::Texture heroTexture;
 	sf::Sprite heroSprite;
 
+	std::string skinNumber;
+
 	double speed = 0.1;
 	int health = 100;
 
@@ -19,7 +21,7 @@ class NPC
 	sf::RectangleShape rec;
 
 public:
-	NPC(int& health, double& speed, int& PosiotinX, int& PositionY, int& sizeX, int& sizeY, float& scaleX, float& scaleY);
+	NPC(std::string &skinNumber, int& health, double& speed, int& PosiotinX, int& PositionY, int& sizeX, int& sizeY, float& scaleX, float& scaleY);
 
 	void drawSprite(sf::RenderWindow& window);
 
@@ -47,5 +49,7 @@ public:
 	sf::FloatRect getGlobalBounds();
 
 	sf::FloatRect getGlobalBoundsRectangle();
+
+	std::string getSkinNumber();
 };
 
