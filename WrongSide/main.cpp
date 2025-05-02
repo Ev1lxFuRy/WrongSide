@@ -16,8 +16,9 @@ int main()
 {
 	setlocale(LC_ALL, "Russian");
 
-	float mapScaleX = 5;
-	float mapScaleY = 5;
+	Vector2f mapScaleXY;
+	mapScaleXY.x = 3.5;
+	mapScaleXY.y = 3.5;
 
 	/*---------------------------------------  HeroParameters  --------------------------------------------------*/
 
@@ -96,7 +97,7 @@ int main()
 
 	/*------------------------------------------  LoadObjects  --------------------------------------------------*/
 
-	Map map(mapScaleX, mapScaleY);
+	Map map(mapScaleXY);
 	NPC player(skinName2, health, speed, PositionX_player1, PositionY_player1, sizeX, sizeY, scaleX, scaleY);
 	NPC player1(skinName2, health, speed, PositionX_player2, PositionY_player2, sizeX, sizeY, scaleX, scaleY);
 

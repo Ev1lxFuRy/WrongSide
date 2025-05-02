@@ -179,6 +179,7 @@
     <ClInclude Include="NPC.h" />
     <ClInclude Include="RenderFPS.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Tiles.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WrongSide.rc" />

@@ -2,45 +2,34 @@
 
 #include "SFML/Graphics.hpp"
 #include <iostream>
+#include "Tiles.h"
 
 class Map
 {
 	sf::Texture textureMap;
 
-	int const static SIZE = 10;
-	sf::Sprite spriteMap[SIZE];
+	Tiles *tiles;
 
 	int oneTileX = 16;
 	int oneTileY = 16;
 
+	int totalTilesX = 0;
+	int totalTilesY = 0;
+
+	int totalTiles;
+
+	int mapNumbers[6]
+	{
+		120,121,122,
+		144,145,146,
+	};
+
+	sf::Sprite mapSprites[6];
+
 public:
 
-	Map(float &mapScaleX, float &mapScaleY)
-	{
+	Map(sf::Vector2f& mapScaleXY);
 
-		if (textureMap.loadFromFile("../../../Assets/map/DungeonTileset.png"))
-		{
-			std::cout << "Текстура карты загружена!!!" << std::endl;
-
-			int countTileX = textureMap.getSize().x / oneTileX;
-			int countTileY = textureMap.getSize().y / oneTileY;
-
-			for (size_t i = 0; i < SIZE; i++)
-			{ 
-				spriteMap[i].setTexture(textureMap);
-				spriteMap[i].setScale(mapScaleX, mapScaleY);
-				spriteMap[i].setTextureRect(sf::IntRect(i * oneTileX, 0 * oneTileY, oneTileX, oneTileY));
-				spriteMap[i].setPosition(sf::Vector2f(100 + i * oneTileX, 100 ));
-			}
-		}
-	}
-
-	void draw(sf::RenderWindow &window)
-	{
-		for (size_t i = 0; i < SIZE; i++)
-		{
-			window.draw(spriteMap[i]);
-		}
-	}
+	void draw(sf::RenderWindow& window);
 };
 
